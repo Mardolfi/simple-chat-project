@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"
+        integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div class="container">
+        <input type="text" class="author" placeholder="Author"/>
+        <div class="messages"></div>
+        <form class="send_message">
+            <input type="text" class="message" placeholder="Message"/>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+    <script>
+        const sendMessageForm = document.querySelector('.send_message')
+        const inputMessage = document.querySelector('.message')
+        const inputAuthor = document.querySelector('.author')
+        const messagesContainer = document.querySelector('.messages')
+        var socket = io('http://localhost:3000')
+
+        function renderMessage(message) {
+            messagesContainer.innerHTML += `
+                <div class="message_content"><p><strong>${message.author}: </strong>${message.message}</p></div>
+            `
+        }
+
+        socket.on('previousMessages', (messages) => {
+            messages.forEach((message) => {
+                renderMessage(message)
+            })
+        })
+
+        socket.on('receiveMessage', message => {
+            renderMessage(message)
+        })
+
+        sendMessageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (inputMessage && inputAuthor) {
+                const message = {
+                    message: inputMessage.value,
+                    author: inputAuthor.value
+                }
+
+                renderMessage(message)
+
+                socket.emit('sendMessage', message)
+
+                inputMessage.value = '';
+            }
+        })
+    </script>
+</body>
+
+</html>
