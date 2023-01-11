@@ -10,22 +10,22 @@ app.set("views", path.join(__dirname, "public"));
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 
-app.use('/', (req, res) => {
-    res.render('index.html')
-})
+app.use("/", (req, res) => {
+  res.render("index.html");
+});
 
-let messages = []
+let messages = [];
 
-io.on('connection', socket => {
-    console.log(`Socket: ${socket.id}`)
-    
-    socket.emit('previousMessages', messages)
+io.on("connection", (socket) => {
+  socket.emit("previousMessages", messages);
 
-    socket.on('sendMessage', data => {
-        messages.push(data)
+  socket.on("sendMessage", (data) => {
+    messages.push(data);
 
-        socket.broadcast.emit('receiveMessage', data)
-    })
-})
+    socket.broadcast.emit("receiveMessage", data);
+  });
+});
 
-server.listen(3000, (err) => err ? console.log(err) : console.log('Servidor conectado com sucesso'))
+server.listen(3000, (err) =>
+  err ? console.log(err) : console.log("Servidor conectado com sucesso")
+);
