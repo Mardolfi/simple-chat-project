@@ -26,6 +26,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, (err) =>
+server.listen(process.env.PORT || 3000, (err) =>
   err ? console.log(err) : console.log("Servidor conectado com sucesso")
 );
